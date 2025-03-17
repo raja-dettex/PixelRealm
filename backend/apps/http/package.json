@@ -1,0 +1,26 @@
+{
+  "name": "http",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "rm -rf ./dist && npx tsc -b",
+    "dev": "npm run build && node ./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@repo/db": "*",
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "prisma": "^6.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.10"
+  }
+}
