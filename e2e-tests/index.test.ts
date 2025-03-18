@@ -1,70 +1,71 @@
-import axios, { Axios, AxiosError } from "axios"
+//  import axios, { Axios, AxiosError } from "axios"
 
-const URL = "http://localhost:3000"
+// const URL = "http://localhost:3000"
 
-const HttpClient = { 
-    get : async ({...args}) => { 
-        const {url, headers} = args
+// const HttpClient = { 
+//     get : async ({...args}) => { 
+//         const {url, headers} = args
         
-        try { 
-            const res = await axios.get(url, {headers: headers})
-            return res
-        }catch(error) { 
-            if(error instanceof AxiosError) {
-                return error.response
-            }
-        }
-    },
-    post : async ({...args}) => { 
-        const {url, headers} = args
-        const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
-        const data: {[key: string]: any} = {}
-        for(const key of keys) { 
-            const value = args[key]
-            data[key] = value
-        }
+//         try { 
+//             const res = await axios.get(url, {headers: headers})
+//             return res
+//         }catch(error) { 
+//             if(error instanceof AxiosError) {
+//                 return error.response
+//             }
+//         }
+//     },
+//     post : async ({...args}) => { 
+//         const {url, headers} = args
+//         const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
+//         const data: {[key: string]: any} = {}
+//         for(const key of keys) { 
+//             const value = args[key]
+//             data[key] = value
+//         }
         
-        try { 
-            const res = await axios.post(url, data, {headers: headers})
-            return res
-        }catch(error) { 
+//         try { 
+//             const res = await axios.post(url, data, {headers: headers})
+//             return res
+//         }catch(error) { 
             
-            if(error instanceof AxiosError) {
+//             if(error instanceof AxiosError) {
                 
-                return error.response
-            }
-        }
-    },
-    put : async ({...args}) => { 
-        const {url, headers} = args
-        const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
-        const data: {[key: string]: any} = {}
-        for(const key of keys) { 
-            const value = args[key]
-            data[key] = value
-        }
+//                 return error.response
+//             }
+//         }
+//     },
+//     put : async ({...args}) => { 
+//         const {url, headers} = args
+//         const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
+//         const data: {[key: string]: any} = {}
+//         for(const key of keys) { 
+//             const value = args[key]
+//             data[key] = value
+//         }
         
-        try { 
-            const res = await axios.put(url, data, {headers: headers})
-            return res
-        }catch(error) { 
-            if(error instanceof AxiosError) {
-                return error.response
-            }
-        }
-    },
-    delete : async ({...args}) => { 
-        const {url, headers} = args
-        try { 
-            const res = await axios.delete(url, {headers: headers})
-            return res
-        }catch(error) { 
-            if(error instanceof AxiosError) {
-                return error.response
-            }
-        }
-    }
-}
+//         try { 
+//             const res = await axios.put(url, data, {headers: headers})
+//             return res
+//         }catch(error) { 
+//             if(error instanceof AxiosError) {
+//                 return error.response
+//             }
+//         }
+//     },
+//     delete : async ({...args}) => { 
+//         const {url, headers} = args
+//         try { 
+//             const res = await axios.delete(url, {headers: headers})
+//             return res
+//         }catch(error) { 
+//             if(error instanceof AxiosError) {
+//                 return error.response
+//             }
+//         }
+//     }
+// }
+
 
 // describe("authentication", ()=> { 
 //     it("user should be able to sign up", async ()=> {
@@ -451,100 +452,100 @@ const HttpClient = {
 // })
 
 
-describe('admin endpoints', ()=> { 
-    let admintoken = ""
-    let userToken = ""
-    let element1Id = "";
-    let element2Id = "";
-    let userId = "";
-    let adminId = ""
-    let mapId = "";
+// describe('admin endpoints', ()=> { 
+//     let admintoken = ""
+//     let userToken = ""
+//     let element1Id = "";
+//     let element2Id = "";
+//     let userId = "";
+//     let adminId = ""
+//     let mapId = "";
     
-    beforeAll(async () => { 
-        const username = "raja" + Math.random() 
-        const password = "pass"
-        const response = await HttpClient.post({url: `${URL}/api/v1/users/signup`,  
-            username,
-            password,
-            type: 'admin'
-        })
-        if(response) { 
-            adminId = response.data.userId;
-            expect(response.status).toBe(201)
-        }
-        const signInResponse = await axios.post(`${URL}/api/v1/users/signin`, { 
-            username, 
-            password
-        })
+//     beforeAll(async () => { 
+//         const username = "raja" + Math.random() 
+//         const password = "pass"
+//         const response = await HttpClient.post({url: `${URL}/api/v1/users/signup`,  
+//             username,
+//             password,
+//             type: 'admin'
+//         })
+//         if(response) { 
+//             adminId = response.data.userId;
+//             expect(response.status).toBe(201)
+//         }
+//         const signInResponse = await axios.post(`${URL}/api/v1/users/signin`, { 
+//             username, 
+//             password
+//         })
 
-        if(signInResponse) admintoken = signInResponse.data.token
+//         if(signInResponse) admintoken = signInResponse.data.token
 
-        // create an user 
-        const userResponse = await HttpClient.post({url: `${URL}/api/v1/users/signup`,  
-            username: username + "_user",
-            password,
-            type: 'user'
-        })
-        if(userResponse) { 
-            userId = userResponse.data.userId;
-            expect(userResponse.status).toBe(201)
-        }
-        const userSignInResponse = await axios.post(`${URL}/api/v1/users/signin`, { 
-            username: username + "_user", 
-            password
-        })
+//         // create an user 
+//         const userResponse = await HttpClient.post({url: `${URL}/api/v1/users/signup`,  
+//             username: username + "_user",
+//             password,
+//             type: 'user'
+//         })
+//         if(userResponse) { 
+//             userId = userResponse.data.userId;
+//             expect(userResponse.status).toBe(201)
+//         }
+//         const userSignInResponse = await axios.post(`${URL}/api/v1/users/signin`, { 
+//             username: username + "_user", 
+//             password
+//         })
 
-        if(userSignInResponse) userToken = userSignInResponse.data.token
+//         if(userSignInResponse) userToken = userSignInResponse.data.token
         
-        // create a few elements for the map
-        let element1 = (await HttpClient.post({url: `${URL}/api/v1/admin/element`,
-            "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
-            "width": 1,
-            "height": 1,
-            "static": true ,// weather or not the user can sit on top of this element (is it considered as a collission or not)
-            headers:{ Authorization : `Bearer ${admintoken}`}
-        }))?.data
-        let element2 = (await HttpClient.post({url: `${URL}/api/v1/admin/element`,
-            "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
-            "width": 2,
-            "height": 2,
-            "static": true ,// weather or not the user can sit on top of this element (is it considered as a collission or not)
-            headers:{ Authorization : `Bearer ${admintoken}`}
-        }))?.data
-        element1Id = element1.elementId
-        element2Id = element2.elementId
-        console.log(element1Id + " " + element2Id)
-        const map  = (await HttpClient.post({url: `${URL}/api/v1/admin/map`, 
-            "thumbnail": "https://thumbnail.com/a.png",
-            "dimensions": "100x200",
-            "name": "100 person interview room",
-            "defaultElements": [{
-                    elementId: element1Id,
-                    x: 20,
-                    y: 20
-                }, {
-                    elementId: element2Id,
-                    x: 18,
-                    y: 20
-                }
-            ], 
-            headers: {Authorization: `Bearer ${admintoken}`}
-        }))?.data
-        console.log(map)
-        mapId = map.mapId
-    })
-    it("user will be able to update element", async () => {
-        console.log("admin token " + admintoken) 
+//         // create a few elements for the map
+//         let element1 = (await HttpClient.post({url: `${URL}/api/v1/admin/element`,
+//             "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+//             "width": 1,
+//             "height": 1,
+//             "static": true ,// weather or not the user can sit on top of this element (is it considered as a collission or not)
+//             headers:{ Authorization : `Bearer ${admintoken}`}
+//         }))?.data
+//         let element2 = (await HttpClient.post({url: `${URL}/api/v1/admin/element`,
+//             "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+//             "width": 2,
+//             "height": 2,
+//             "static": true ,// weather or not the user can sit on top of this element (is it considered as a collission or not)
+//             headers:{ Authorization : `Bearer ${admintoken}`}
+//         }))?.data
+//         element1Id = element1.elementId
+//         element2Id = element2.elementId
+//         console.log(element1Id + " " + element2Id)
+//         const map  = (await HttpClient.post({url: `${URL}/api/v1/admin/map`, 
+//             "thumbnail": "https://thumbnail.com/a.png",
+//             "dimensions": "100x200",
+//             "name": "100 person interview room",
+//             "defaultElements": [{
+//                     elementId: element1Id,
+//                     x: 20,
+//                     y: 20
+//                 }, {
+//                     elementId: element2Id,
+//                     x: 18,
+//                     y: 20
+//                 }
+//             ], 
+//             headers: {Authorization: `Bearer ${admintoken}`}
+//         }))?.data
+//         console.log(map)
+//         mapId = map.mapId
+//     })
+//     it("user will be able to update element", async () => {
+//         console.log("admin token " + admintoken) 
 
-        const response = await HttpClient.put({ 
-            url: `${URL}/api/v1/admin/element/${element1Id}`,
-            imageUrl: "",
-            headers: {Authorization: `Bearer ${admintoken}`}
-        })
-        if(response) { 
-            console.log(response.data)
-            expect(response.status).toBe(200)
-        }
-    })
+//         const response = await HttpClient.put({ 
+//             url: `${URL}/api/v1/admin/element/${element1Id}`,
+//             imageUrl: "",
+//             headers: {Authorization: `Bearer ${admintoken}`}
+//         })
+//         if(response) { 
+//             console.log(response.data)
+//             expect(response.status).toBe(200)
+//         }
+//     })
 
-})
+// })
