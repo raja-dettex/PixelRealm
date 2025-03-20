@@ -4,6 +4,7 @@ import { Message, UserEvent } from "./types"
 import { JoinEventPayload, MovementEventPayload } from "./types"
 import { WebSocket } from "ws"
 import jwt, {JwtPayload} from "jsonwebtoken"
+import { SpaceEventEmitter } from "./spaceEventEmitter"
 
 const HttpClient = { 
     get: async ({...args}) => { 
@@ -20,6 +21,7 @@ const HttpClient = {
 export interface IUser { 
     id: string,
     ws: WebSocket
+    messages : UserEvent[]
     send(message: Message): any
     toString() : string 
 }
@@ -35,20 +37,25 @@ export class User implements IUser{
     private spaceId?: string
     private x?: number
     private y?:number   
+    public messages: UserEvent[]
     constructor(private spaceManager: SpaceManager,  ws: WebSocket) { 
         this.id = getRandom(10)
         this.ws = ws
+        this.initHandler()
+        this.messages = []
     }
 
-
+    public initHandler() { 
+        this.ws.on('message', async (e)=> { 
+            const data = JSON.parse(e.toString())
+            const _ = await this.handleEvent(data)
+        })
+    }
     
     public async handleEvent(event: UserEvent) {
-        console.log("handling....")
-        console.log("users length " + this.spaceManager.getUsers().length)
         for(const user of this.spaceManager.getUsers()) { 
             console.log(user?user.toString() : "user is undef")
         }
-        console.log("handling event") 
         switch(event.type) { 
             case "join" : {
                 const {spaceId, token} = event.payload
@@ -56,37 +63,51 @@ export class User implements IUser{
                 const res = await HttpClient.get({url: `http://localhost:3000/api/v1/space/${spaceId}`,
                     headers : { Authorization: `Bearer ${token}`}
                 })
-                if(!res.data.space && spaceId !== res.data.space.spaceId) { 
+                if(res.status !== 200) { 
                     this.ws.close()
                     return
                 }
-                this.spaceId = res.data.spaceId
                 // get the userId from the token
-                this.userId = (jwt.verify(token, "") as JwtPayload).id
-                this.x = Math.floor(Math.random() * 20)
-                this.y = Math.floor(Math.random() * 20)
-                                  
-                this.spaceManager.addUser(spaceId, this)
-                this.spaceManager.broadcast({ 
-                    type: 'user-join',
-                    payload: { 
-                        userId: this.userId,
-                        x: this.x,
-                        y: this.y
+                try { 
+                    console.log(token)
+                    this.userId = (jwt.verify(token, 'secret') as JwtPayload).id
+                    if(!this.userId) { 
+                        this.ws.close()
+                        return
                     }
-                }, this, spaceId)
-                this.spaceManager.getUsers()
-                this.send({
-                    type: "space-joined",
-                    payload: { 
-                        spawn: { 
+                    this.x = Math.floor(Math.random() * 20)
+                    this.y = Math.floor(Math.random() * 20)
+                    this.spaceId = spaceId        
+                    this.spaceManager.addUser(spaceId, this)
+                    this.spaceManager.broadcast({ 
+                        type: 'user-join',
+                        payload: { 
+                            userId: this.userId,
                             x: this.x,
                             y: this.y
-                        },
-                        users: this.spaceManager.getUserIds(spaceId)
+                        }
+                    }, this, this.spaceId!)
+                    this.spaceManager.getUsers()
+                    const spaceJoinedEvent = {
+                        type: "space-joined",
+                        payload: { 
+                            spawn: { 
+                                x: this.x,
+                                y: this.y
+                            },
+                            users: this.spaceManager.getUserIds(spaceId)
+                        }
                     }
-                })
-                break
+                    this.send(spaceJoinedEvent)
+                    this.spaceManager.broadcast(spaceJoinedEvent, this, this.spaceId!)
+                    const spaceEventEmitter = SpaceEventEmitter.getInstance()
+                    spaceEventEmitter.emit('user-join', {id: this.id, spaceId: this.spaceId})
+                    this.messages.push(spaceJoinedEvent)
+                    break
+                } catch(error) { 
+                    console.log(error)
+                    break
+                }
             }
             case "move" : { 
                 const {x, y} = event.payload
@@ -95,21 +116,37 @@ export class User implements IUser{
                 if((xDisplacement === 1 && yDisplacement ===0) || (xDisplacement === 0 && yDisplacement === 1)) { 
                     this.x = x
                     this.y = y
-                    this.spaceManager.broadcast({
+                    const moveEvent = {
                         type: 'move',
                         payload: { 
-                            userId: this.userId!,
+                            userId: this.id,
                             x: this.x,
                             y: this.y
                         }
-                    }, this, this.spaceId!)
+                    }
+                    this.spaceManager.broadcast(moveEvent, this, this.spaceId!)
+                    console.log("pushing")
+                    this.messages.push(moveEvent)
+                    break
                 }
+                this.send({
+                    type: 'movement-rejected',
+                    payload: { 
+                        x: this.x,
+                        y: this.y
+                    }
+                })
+                
                 break;
             }
         }
     }
 
-    public send(message: Message) { 
+    public handleUserLeft() { 
+        this.spaceManager.removeUser(this, this.spaceId!)
+    }
+
+    public send(message: UserEvent) { 
         this.ws.send(JSON.stringify(message))
     }
 

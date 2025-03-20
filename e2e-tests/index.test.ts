@@ -1,70 +1,70 @@
-//  import axios, { Axios, AxiosError } from "axios"
+ import axios, { Axios, AxiosError } from "axios"
 
-// const URL = "http://localhost:3000"
+export const URL = "http://localhost:3000"
 
-// const HttpClient = { 
-//     get : async ({...args}) => { 
-//         const {url, headers} = args
+export const HttpClient = { 
+    get : async ({...args}) => { 
+        const {url, headers} = args
         
-//         try { 
-//             const res = await axios.get(url, {headers: headers})
-//             return res
-//         }catch(error) { 
-//             if(error instanceof AxiosError) {
-//                 return error.response
-//             }
-//         }
-//     },
-//     post : async ({...args}) => { 
-//         const {url, headers} = args
-//         const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
-//         const data: {[key: string]: any} = {}
-//         for(const key of keys) { 
-//             const value = args[key]
-//             data[key] = value
-//         }
+        try { 
+            const res = await axios.get(url, {headers: headers})
+            return res
+        }catch(error) { 
+            if(error instanceof AxiosError) {
+                return error.response
+            }
+        }
+    },
+    post : async ({...args}) => { 
+        const {url, headers} = args
+        const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
+        const data: {[key: string]: any} = {}
+        for(const key of keys) { 
+            const value = args[key]
+            data[key] = value
+        }
         
-//         try { 
-//             const res = await axios.post(url, data, {headers: headers})
-//             return res
-//         }catch(error) { 
+        try { 
+            const res = await axios.post(url, data, {headers: headers})
+            return res
+        }catch(error) { 
             
-//             if(error instanceof AxiosError) {
+            if(error instanceof AxiosError) {
                 
-//                 return error.response
-//             }
-//         }
-//     },
-//     put : async ({...args}) => { 
-//         const {url, headers} = args
-//         const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
-//         const data: {[key: string]: any} = {}
-//         for(const key of keys) { 
-//             const value = args[key]
-//             data[key] = value
-//         }
+                return error.response
+            }
+        }
+    },
+    put : async ({...args}) => { 
+        const {url, headers} = args
+        const keys = Object.keys(args).filter(key => key !== 'headers' && key !== 'url')
+        const data: {[key: string]: any} = {}
+        for(const key of keys) { 
+            const value = args[key]
+            data[key] = value
+        }
         
-//         try { 
-//             const res = await axios.put(url, data, {headers: headers})
-//             return res
-//         }catch(error) { 
-//             if(error instanceof AxiosError) {
-//                 return error.response
-//             }
-//         }
-//     },
-//     delete : async ({...args}) => { 
-//         const {url, headers} = args
-//         try { 
-//             const res = await axios.delete(url, {headers: headers})
-//             return res
-//         }catch(error) { 
-//             if(error instanceof AxiosError) {
-//                 return error.response
-//             }
-//         }
-//     }
-// }
+        try { 
+            const res = await axios.put(url, data, {headers: headers})
+            return res
+        }catch(error) { 
+            if(error instanceof AxiosError) {
+                return error.response
+            }
+        }
+    },
+    delete : async ({...args}) => { 
+        const {url, headers} = args
+        try { 
+            const res = await axios.delete(url, {headers: headers})
+            return res
+        }catch(error) { 
+            if(error instanceof AxiosError) {
+                return error.response
+            }
+        }
+    }
+}
 
 
 // describe("authentication", ()=> { 
